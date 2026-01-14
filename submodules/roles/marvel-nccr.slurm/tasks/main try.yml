@@ -1,0 +1,241 @@
+- name: Install dirmngr
+  become: true
+  apt:
+    name: dirmngr
+    state: present
+    update_cache: true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
+- name: add ansible repository
+  # ansible directly available in ubuntu 20.04: https://github.com/ansible/ansible/pull/69161
+  when: ansible_facts['distribution_major_version'] | int < 20
+  become: true
+  apt_repository:
+    repo: 'ppa:ansible/ansible'
+    state: present
+
+- name: Install apt packages
+  become: true
+  apt:
+    update_cache: true
+    cache_valid_time: 86400
+    name:
+    - slurm-wlm
+    - slurm-wlm-basic-plugins
+    - slurm-wlm-basic-plugins-dev
+    - slurmd
+    - slurmctld
+    - munge
+    - sendmail
+    - ansible
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
+- name: hide slurm user (created by slurm package) on login screens
+  become: true
+  ini_file:
+    path: "/var/lib/AccountsService/users/slurm"
+    section: "User"
+    option: "SystemAccount"
+    value: "true"
+    create: yes
+
+- name: create directories for slurm
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ slurm_user }}"
+    group: "{{ slurm_user }}"
+    mode: '0755'
+  with_items:
+  - /var/run/slurm-llnl
+  - /var/lib/slurm-llnl
+  - /var/lib/slurm-llnl/slurmd
+  - /var/lib/slurm-llnl/slurmctld
+  - /var/log/slurm-llnl
+  - /etc/slurm-llnl
+  - /var/spool/slurm
+  - /var/spool/slurmd
+  - /var/spool/slurmctld
+
+- name: get node hardware configuration
+  become: true
+  command: slurmd -C
+  register: slurmd_hardware_info
+  changed_when: false
+  failed_when: false
+
+# Used configurator for generating file
+# (make sure to select the correct SLURM version!)
+# https://slurm.schedmd.com/configurator.html
+- name: Copy slurm configuration template
+  become: true
+  template:
+    src: slurm.conf
+    owner: "{{ slurm_user }}"
+    group: "{{ slurm_user }}"
+    dest: /etc/slurm-llnl/slurm.conf
+    mode: '0644'
+  vars:
+    # must match those defined in the .service files
+    # changed from surm version 17 -> 19
+    slurm_pid_dir: "{{ '/var/run/slurm-llnl' if ansible_facts['distribution_major_version'] | int < 20 else '/run' }}"
+    slurm_node_config: "{{ slurmd_hardware_info.stdout_lines[0] | default('') }}"
+  register: conf_template
+
+- name: ensure slurm configuration has node entry
+  become: true
+  lineinfile:
+    path: /etc/slurm-llnl/slurm.conf
+    regexp: '^NodeName={{ ansible_hostname }}'
+    line: "NodeName={{ ansible_hostname }} CPUs={{ ansible_processor_vcpus }} State=UNKNOWN"
+    insertafter: '^#NodeName='
+  when: slurmd_hardware_info.stdout_lines is defined
+
+- name: ensure slurm configuration has partition entry
+  become: true
+  lineinfile:
+    path: /etc/slurm-llnl/slurm.conf
+    regexp: '^PartitionName='
+    line: "PartitionName=debug Nodes={{ ansible_hostname }} Default=YES MaxTime=INFINITE State=UP"
+    insertafter: '^NodeName='
+
+- name: disable DNS configless mode in slurm
+  become: true
+  lineinfile:
+    path: /etc/slurm-llnl/slurm.conf
+    regexp: '^SlurmctldParameters='
+    line: 'SlurmctldParameters=disable_configless'
+    insertafter: '^ClusterName='
+
+- include_tasks: resources_service.yml
+
+# munge key already created by apt-get install
+# will not overwrite key due to 'creates' flag
+# but useful to avoid prompts
+- name: create munge key
+  become: true
+  command: /usr/sbin/create-munge-key -f
+  args:
+    creates: "/etc/munge/munge.key"
+
+- name: set munge key permissions
+  become: true
+  file:
+    path: /etc/munge/munge.key
+    owner: munge
+    group: munge
+    mode: '0400'
+
+- name: set munge directory permissions
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: munge
+    group: munge
+    mode: '0755'
+  with_items:
+  - /etc/munge
+  - /var/log/munge
+  - /var/lib/munge
+  - /run/munge
+
+# munge should start before slurm daemons
+# https://slurm.schedmd.com/quickstart_admin.html
+- name: start munge service
+  become: true
+  service:
+    name: munge
+    state: started
+    enabled: yes
+
+- name: wait for munge to initialize
+  pause:
+    seconds: 3
+
+- name: verify munge is working
+  become: true
+  command: munge -n
+  register: munge_test
+  changed_when: false
+  failed_when: munge_test.rc != 0
+
+- name: clean stale slurm state files
+  become: true
+  shell: |
+    systemctl stop slurmctld slurmd 2>/dev/null || true
+    rm -f /var/run/slurm-llnl/*.pid 2>/dev/null || true
+    rm -f /var/spool/slurmd/* /var/spool/slurmctld/* 2>/dev/null || true
+  changed_when: false
+
+- name: start slurmctld service first
+  become: true
+  service:
+    name: slurmctld
+    state: started
+    enabled: yes
+  register: slurmctld_service
+
+- name: wait for slurmctld to be ready
+  pause:
+    seconds: 5
+
+- name: start slurmd service
+  become: true
+  service:
+    name: slurmd
+    state: started
+    enabled: yes
+  register: slurmd_service
+  failed_when: false
+
+- name: check slurmd service status if failed
+  become: true
+  shell: |
+    systemctl status slurmd.service --no-pager || true
+    echo "---"
+    journalctl -u slurmd.service --no-pager -n 30 || true
+  register: slurmd_debug_output
+  when: slurmd_service.failed
+  changed_when: false
+
+- name: display slurmd error details
+  debug:
+    var: slurmd_debug_output.stdout_lines
+  when: slurmd_service.failed
+
+- name: attempt to fix slurmd startup
+  become: true
+  shell: |
+    chown -R slurm:slurm /var/spool/slurmd /var/log/slurm-llnl /var/lib/slurm-llnl
+    systemctl stop slurmd
+    rm -f /var/run/slurmd.pid
+    systemctl start slurmd
+  when: slurmd_service.failed
+  register: slurmd_fix_attempt
+  failed_when: false
+
+- name: verify slurmd is running after fix
+  become: true
+  service:
+    name: slurmd
+    state: started
+  when: slurmd_service.failed
+  register: slurmd_final_check
+  failed_when: false
+
+- name: show final slurm services status
+  debug:
+    msg: "slurmctld: {{ 'running' if not slurmctld_service.failed else 'failed' }}, slurmd: {{ 'running' if not (slurmd_service.failed and slurmd_final_check.failed) else 'failed' }}"
+
+# slurmdbd does not exist in SLURM 15.08
+#    - slurmdbd
+
+- import_tasks: tests.yml
+  when: 
+    - run_tests is defined 
+    - run_tests
+    - not (slurmd_service.failed and slurmd_final_check.failed)

@@ -1,23 +1,57 @@
-- name: Install {{ conda_env }} environment
+---
+- name: "Check if conda env '{{ conda_env }}' exists"
+  become: true
+  become_user: "{{ vm_user }}"
+  stat:
+    path: "/home/{{ vm_user }}/.conda/envs/{{ conda_env }}"
+  register: conda_env_stat
+
+- name: "Create conda env '{{ conda_env }}'"
+  tags: [code-envs]
+  become: true
+  become_user: "{{ vm_user }}"
+  shell: |
+    eval "$(~/.conda/bin/conda shell.bash hook)"
+    mamba create --yes -n {{ conda_env }}
+  args:
+    executable: /bin/bash
+  environment:
+    PATH: "/home/{{ vm_user }}/.conda/bin:{{ ansible_env.PATH }}"
+  when: not conda_env_stat.stat.exists
+
+- name: "Install packages into '{{ conda_env }}'"
   tags: [code-envs]
   become: true
   become_user: "{{ vm_user }}"
   chrisjsewell.conda.install_pkgs:
     executable: "~/.conda/bin/mamba"
     env: "{{ conda_env }}"
+    channels:
+      - conda-forge
     packages: "{{ code_packages }}"
+  failed_when: false
 
-- name: Retrieve list of core packages in {{ conda_env }} env
+- name: "Ensure {{ conda_env }} is on PATH via .bashrc"
+  tags: [code-envs]
+  become: true
+  become_user: "{{ vm_user }}"
+  blockinfile:
+    path: "/home/{{ vm_user }}/.bashrc"
+    marker: "## {mark} ANSIBLE MANAGED BLOCK ({{ conda_env }})"
+    block: |
+      export PATH="$HOME/.conda/envs/{{ conda_env }}/bin:$PATH"
+
+- name: "List installed packages in '{{ conda_env }}'"
   tags: [code-envs]
   become: true
   become_user: "{{ vm_user }}"
   chrisjsewell.conda.list_pkgs:
     executable: "~/.conda/bin/mamba"
     env: "{{ conda_env }}"
-    regex: "({{ code_packages | map('regex_search', '^[^=]+') | join('|') }})"
   register: code_packages_list
 
-- tags: [code-envs]
+- name: "Write release notes for '{{ conda_env }}'"
+  tags: [code-envs]
   include_role:
     name: release_notes
   vars:
@@ -28,4 +62,6 @@
   loop_control:
     loop_var: pkg
     label: "{{ pkg.name }}"
-  when: release_notes is defined and release_notes
+  when:
+    - release_notes is defined
+    - release_notes

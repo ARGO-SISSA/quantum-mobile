@@ -1,0 +1,264 @@
+{
+ "files": [
+  {
+   "name": ".",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "LICENSE",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "308a313fddc22a1e7beaae199e88a5d1d5babf861869f87c1db56fc20f7c11b6",
+   "format": 1
+  },
+  {
+   "name": ".pre-commit-config.yaml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "32d3607797b875e501dee3c5a0e056683dfcfaf0c79e0ff187be0686c9478b2e",
+   "format": 1
+  },
+  {
+   "name": "plugins",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/README.md",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "23e9939164cad964c2338b8059e4d3def72eef9523e32594503efd50960fcae4",
+   "format": 1
+  },
+  {
+   "name": "plugins/modules",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "plugins/modules/install_pkgs.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "6564288fc5685516a57a4728d279cb81066523d62ac512ba7aeecdbb7aca6787",
+   "format": 1
+  },
+  {
+   "name": "plugins/modules/expandpath.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "c0839ef86bb436823c3188de17c06f0f62afdecdb048f6a5192b37586f1ab580",
+   "format": 1
+  },
+  {
+   "name": "plugins/modules/list_pkgs.py",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "b8e725e92d8599f4b6360d03f01e80a51c589c3e589aeec049d161f5df50464d",
+   "format": 1
+  },
+  {
+   "name": "test-requirements.txt",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "f74fe405cb1879d07a35964d4faafa0346916ee53b708085249b5bab9be7f1b8",
+   "format": 1
+  },
+  {
+   "name": ".yamllint",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "2cfd63a80fecd2f8c1f33bcaee3e0c81f2342aaf2aa03191b7e36f50c6ee64a2",
+   "format": 1
+  },
+  {
+   "name": "tests",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "tests/sanity",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "tests/sanity/ignore-2.13.txt",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "a66cdeac0a48de0d1060d799ce07b004cea5a96f1fe46587cfa3bd21efff8a07",
+   "format": 1
+  },
+  {
+   "name": "meta",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "meta/runtime.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "4de93c3b14e5013b991a651d0315d12c00fd2327f39e0dc5218bcef7787c8c7f",
+   "format": 1
+  },
+  {
+   "name": "roles",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "roles/user_install",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "roles/user_install/tasks",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "roles/user_install/tasks/main.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "6acf6d0f65d6536ff127efa634f8137dcd83b522cff10a8d9ebad710c2ffc775",
+   "format": 1
+  },
+  {
+   "name": "roles/user_install/meta",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "roles/user_install/meta/argument_specs.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "00af52ce822063b6a75c6e4f9e514bd729296ceed0502cfb3b6068520a4c3a4a",
+   "format": 1
+  },
+  {
+   "name": "roles/user_install/meta/main.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "bc16d22eba1762094217fc59a72070babec9cf7da20e3e97b18caf8309bb1aec",
+   "format": 1
+  },
+  {
+   "name": "roles/user_install/README.md",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "cc751d75266f757a38189f15d54e548dc87706f14a39756995c27b49eaca8a07",
+   "format": 1
+  },
+  {
+   "name": "roles/user_install/defaults",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "roles/user_install/defaults/main.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "56b10537aa772c48c2a374de769255c84e21bd2f400d8a18137871f8489719f9",
+   "format": 1
+  },
+  {
+   "name": "README.md",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "40d925463ed7825f0181bb4855047a0cd25357e034b8a932accb91c8eb202cc2",
+   "format": 1
+  },
+  {
+   "name": ".gitignore",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "de8ff4131272a35f6c599297e64e8a30a051b3d3d3db8d6f0d66b71b986ade36",
+   "format": 1
+  },
+  {
+   "name": ".github",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": ".github/workflows",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": ".github/workflows/ci.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "13249599bfad835174fd7f093a6140d7f7f8b051776acfeab2c9deb90f1775b0",
+   "format": 1
+  },
+  {
+   "name": "tox.ini",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "c26891bb22b1a49c92d56901bd8a375999f495d88307ce2e926aab4ebcc7aff2",
+   "format": 1
+  },
+  {
+   "name": "molecule",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "molecule/default",
+   "ftype": "dir",
+   "chksum_type": null,
+   "chksum_sha256": null,
+   "format": 1
+  },
+  {
+   "name": "molecule/default/verify.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "898cd888373836c905139d929c049312d95a9c92c7e36ee4daa684aa29aaa2ee",
+   "format": 1
+  },
+  {
+   "name": "molecule/default/molecule.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "0220eea2ad4d2ae5fc3e22e40591a4f26579ca98378a621f2362c5c240a3c400",
+   "format": 1
+  },
+  {
+   "name": "molecule/default/converge.yml",
+   "ftype": "file",
+   "chksum_type": "sha256",
+   "chksum_sha256": "d7077d617e0f4482c3c045a2fa480dde08dcd91bc2931b1d3b5f42d89ddc2004",
+   "format": 1
+  }
+ ],
+ "format": 1
+}

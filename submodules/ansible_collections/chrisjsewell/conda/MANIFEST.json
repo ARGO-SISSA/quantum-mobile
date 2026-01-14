@@ -1,0 +1,31 @@
+{
+ "collection_info": {
+  "namespace": "chrisjsewell",
+  "name": "conda",
+  "version": "0.0.9",
+  "authors": [
+   "Chris Sewell <chrisj_sewell@hotmail.com>"
+  ],
+  "readme": "README.md",
+  "tags": [
+   "conda",
+   "mamba"
+  ],
+  "description": "A collection of Ansible modules for managing Conda environments",
+  "license": [],
+  "license_file": "LICENSE",
+  "dependencies": {},
+  "repository": "https://www.github.com/chrisjsewell/ansible-conda",
+  "documentation": null,
+  "homepage": null,
+  "issues": null
+ },
+ "file_manifest_file": {
+  "name": "FILES.json",
+  "ftype": "file",
+  "chksum_type": "sha256",
+  "chksum_sha256": "fc9679f3249f677cf03fc8f319f3c3832cedbb5d8f04d97c0d6377c85bfa45fb",
+  "format": 1
+ },
+ "format": 1
+}

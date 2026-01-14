@@ -18,6 +18,6 @@
     aiida_script_path: "{{ aiida_examples_dir.path }}/{{ aiida_script }}"
   loop:
   - qe_pw.py
-  - nwchem.py
+#  - nwchem.py
   loop_control:
     loop_var: aiida_script

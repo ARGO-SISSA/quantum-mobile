@@ -1,0 +1,34 @@
+- name: run configuration update script
+  become: true
+  command: /usr/bin/slurm-resources -e restart_on_change=true
+  changed_when: false
+
+- name: create test directory
+  file:
+    path: "{{ slurm_test_folder }}"
+    state: directory
+
+- name: copy test submission files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ slurm_test_folder }}"
+    mode: u=rwx,g=rx
+  with_items:
+  - test-submit.sh
+  - job.sh
+
+# in case the node is stuck in state "drain", recover via
+# sudo -su slurm scontrol
+# scontrol: update NodeName=qmobile State=DOWN Reason="undraining"
+# scontrol: update NodeName=qmobile State=RESUME
+- name: do test submission
+  command: "{{ slurm_test_folder }}/test-submit.sh"
+  args:
+    creates: "{{ slurm_test_folder }}/test1/output.txt"
+  register: slurm_test
+  failed_when: false
+  ignore_errors: yes
+
+- name: show test result
+  debug:
+    msg: "SLURM test {{ 'passed' if slurm_test.rc == 0 else 'failed (non-fatal)' }}"

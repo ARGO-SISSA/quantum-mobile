@@ -36,9 +36,9 @@ Vagrant.configure(2) do |config|
      # See https://www.virtualbox.org/manual/ch08.html
      vb.customize ["modifyvm", :id, "--vram", gconfig['vm_vram']]
      # makes mouse/typing more responsive
-     if !(on_ci)
-      vb.customize ["modifyvm", :id, "--accelerate3d", "on"]
-     end
+     #if !(on_ci)
+     # vb.customize ["modifyvm", :id, "--accelerate3d", "on"]
+     #end
      # see https://github.com/marvel-nccr/quantum-mobile/issues/99
      vb.customize ["modifyvm", :id, "--graphicscontroller", "vmsvga"]
      vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
@@ -90,6 +90,7 @@ Vagrant.configure(2) do |config|
     # ansible.verbose = "v"
     ansible.extra_vars = {
       build_hosts: "vagrant-provision",
+      ansible_python_interpreter: "/usr/bin/python3",
     }
     ansible.raw_arguments = Shellwords.shellsplit(ENV['ANSIBLE_ARGS']) if ENV['ANSIBLE_ARGS']
     # Ensure that public key auth is not disabled by the user's config

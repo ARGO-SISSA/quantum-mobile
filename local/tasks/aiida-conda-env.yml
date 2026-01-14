@@ -1,3 +1,23 @@
+- name: Check if conda env '{{ conda_env }}' exists
+  become: true
+  become_user: "{{ vm_user }}"
+  stat:
+    path: "/home/{{ vm_user }}/.conda/envs/{{ conda_env }}"
+  register: aiida_env_stat
+
+- name: Create conda env '{{ conda_env }}'
+  tags: [aiida-env]
+  become: true
+  become_user: "{{ vm_user }}"
+  shell: |
+    eval "$(~/.conda/bin/conda shell.bash hook)"
+    mamba create --yes -n {{ conda_env }}
+  args:
+    executable: /bin/bash
+  environment:
+    PATH: "/home/{{ vm_user }}/.conda/bin:{{ ansible_env.PATH }}"
+  when: not aiida_env_stat.stat.exists
+
 - name: Install AiiDA environment
   tags: [aiida-env]
   become: true

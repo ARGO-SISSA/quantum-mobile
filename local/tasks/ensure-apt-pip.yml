@@ -19,10 +19,3 @@
   file:
     path: /usr/share/man/man1
     state: directory
-
-- name: upgrade pip
-  become: true
-  become_user: "{{ root_user }}"
-  pip:
-    name: pip
-    extra_args: --upgrade

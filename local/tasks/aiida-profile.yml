@@ -24,6 +24,16 @@
       password: "{{ parameters.db_password }}"
       encrypted: true
 
+  - name: Grant privileges on database and schema
+    become: true
+    become_user: "{{ postgres_user }}"
+    postgresql_privs:
+      db: "{{ parameters.db_name }}"
+      role: "{{ parameters.db_username }}"
+      type: schema
+      objs: public
+      privs: USAGE,CREATE
+
   - name: "Set up AiiDA profile '{{ name }}'"
     shell: |
       {{ aiida_run_verdi }} setup \

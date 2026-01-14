@@ -18,7 +18,7 @@ all:
     vm_author_url: "http://nccr-marvel.ch"
 
     # VM configuration
-    vm_base_image: "bento/ubuntu-20.04"
+    vm_base_image: "bento/ubuntu-24.04"
     vm_hostname: "qmobile"
     vm_user: "max"
     vm_password: "moritz"
@@ -26,6 +26,7 @@ all:
     vm_cpus: 2
     vm_vram: 128
     vm_headless: false
+    vm_wm_package: ubuntu-desktop-minimal 
     vm_browser: chromium-browser  # 'chromium-browser' or 'firefox'
     vm_data_folder: "/usr/local/share"  # this is used to put shared data files in
     # vm_shared_folder: "/shared"  # this is currently inactive in Vagrant config
