@@ -16,9 +16,3 @@ tmp.vmdk
 dist/
 _archive
 TODO.md
-
-# roles & dependencies
-submodules/roles/marvel-nccr*
-submodules/roles/gantsign*
-submodules/roles/geerlingguy*
-submodules/ansible_collections/
